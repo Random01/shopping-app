@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "target": "ES6",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "downlevelIteration": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noImplicitAny": true
+  }
+}
