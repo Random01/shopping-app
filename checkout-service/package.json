@@ -10,13 +10,16 @@
         "build:watch": "webpack --mode development --watch --progress"
     },
     "dependencies": {
+        "aws-sdk": "^2.953.0",
         "express": "^4.17.1",
+        "rxjs": "^7.3.0",
         "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@types/express": "^4.17.11",
         "@types/node": "^12.20.15",
         "@types/uuid": "^8.3.0",
+        "@aws-sdk/types": "^3.3.0",
         "clean-webpack-plugin": "^4.0.0-alpha.0",
         "copy-webpack-plugin": "^9.0.1",
         "file-loader": "^6.2.0",
