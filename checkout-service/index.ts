@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 
 import express from 'express';
 
-import { ExternalCheckoutService } from './src';
+import { CheckoutService, ExternalCheckoutService } from './src';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,13 +26,16 @@ app.get('/state', (_, res) => {
 });
 
 const externalCheckoutService = new ExternalCheckoutService();
-app.get('/test-checkout', (_, res) => {
+app.get('/test-external-checkout', (_, res) => {
   externalCheckoutService.runExternalCheckout(uuidv4())
     .then(
       data => res.status(200).send(data),
       err => res.status(500).send({ message: err.message }),
     );
 });
+
+const checkoutService = new CheckoutService();
+checkoutService.start();
 
 app.listen(PORT, () => {
   console.log(`Checkout Service is listening on port ${PORT}!`);

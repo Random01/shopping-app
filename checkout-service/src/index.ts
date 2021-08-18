@@ -1,3 +1,4 @@
-export * from './checkout-sns-listener.service';
-export * from './checkout-sns-sender.service';
+export * from './checkout-sqs-listener.service';
+export * from './checkout-sqs-sender.service';
 export * from './external-checkout.service';
+export * from './checkout.service';
