@@ -2,12 +2,12 @@ import AWS from 'aws-sdk';
 
 import express from 'express';
 
-import { CheckoutService, ExternalCheckoutService } from './src';
+import { CheckoutService } from './src';
 
 import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 const appUuid = uuidv4();
 
 AWS.config.update({ region: 'us-east-2' });
@@ -25,17 +25,7 @@ app.get('/state', (_, res) => {
   res.send({ appUuid });
 });
 
-const externalCheckoutService = new ExternalCheckoutService();
-app.get('/test-external-checkout', (_, res) => {
-  externalCheckoutService.runExternalCheckout(uuidv4())
-    .then(
-      data => res.status(200).send(data),
-      err => res.status(500).send({ message: err.message }),
-    );
-});
-
-const checkoutService = new CheckoutService();
-checkoutService.start();
+(new CheckoutService()).start();
 
 app.listen(PORT, () => {
   console.log(`Checkout Service is listening on port ${PORT}!`);

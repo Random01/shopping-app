@@ -1,4 +1,4 @@
-import { Client, QueryResult } from 'pg';
+import { Client, QueryConfig, QueryResult } from 'pg';
 
 import { DefaultPostgressConfig } from './default-postgres-config';
 
@@ -12,7 +12,7 @@ export class DbAccessService {
     return client;
   }
 
-  protected async runQuery<T = any>(query: string): Promise<QueryResult<T>> {
+  protected async runQuery<T = any>(query: string | QueryConfig): Promise<QueryResult<T>> {
     const client = await this.getConnection()
     const res = await client.query(query);
     await client.end();

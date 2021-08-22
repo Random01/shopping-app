@@ -6,7 +6,7 @@ import AWS from 'aws-sdk';
 export class CheckoutSqsListenerService {
 
   /**
-   * 
+   * Listens to "IN" messages.
    */
   public receiveMessage() {
     const queueURL = 'https://sqs.us-east-2.amazonaws.com/252842722782/checkout-in-queue';

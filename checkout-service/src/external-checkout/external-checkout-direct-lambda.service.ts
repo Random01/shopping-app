@@ -5,12 +5,12 @@ import AWS from 'aws-sdk';
  * 
  * Lambda is triggered from the Checkout Service.
  */
-export class ExternalCheckoutService {
+export class ExternalCheckoutDirectLambdaService {
 
-  public async runExternalCheckout(payload: string): Promise<any> {
+  public async runExternalCheckout(chartId: string): Promise<any> {
     const params = {
       FunctionName: '3rd-party-checkout-procedure',
-      Payload: JSON.stringify({ payload }),
+      Payload: JSON.stringify({ payload: chartId }),
     };
 
     try {

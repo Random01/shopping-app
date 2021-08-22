@@ -8,7 +8,8 @@
         "start:watch": "set NODE_ENV=development && nodemon --inspect=43499 dist/index.js --debug-brk",
         "build": "webpack --mode production",
         "build:watch": "webpack --mode development --watch --progress",
-        "serve": "concurrently \"npm:build:watch\" \"npm:start:watch\""
+        "serve": "concurrently \"npm:build:watch\" \"npm:start:watch\"",
+        "create-db": "node db-scripts/index.js"
     },
     "dependencies": {
         "aws-sdk": "^2.953.0",
