@@ -7,10 +7,10 @@ import { CheckoutService } from './src';
 import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 3002;
 const appUuid = uuidv4();
 
-AWS.config.update({ region: 'us-east-2' });
+AWS.config.update({ region: process.env.AWS_REGION || 'us-east-2' });
 
 app.use(express.json());
 app.use(express.urlencoded({
