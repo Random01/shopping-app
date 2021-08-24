@@ -1,4 +1,5 @@
 1. "npm i"
 1. "npm run build"
 1. "docker build . -t falserandom/shopping-chart-service"
-1. "docker run -p 49160:3001 -d falserandom/shopping-chart-service"
+1. "docker run -d -p 49160:3001 --env-file .env falserandom/shopping-chart-service"
+1. Or "docker run -d -p 49160:3001 -e AWS_ACCESS_KEY_ID='...' -e AWS_SECRET_ACCESS_KEY='...' falserandom/shopping-chart-service"

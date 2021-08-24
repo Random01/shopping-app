@@ -11,11 +11,13 @@ export class ChartsRouter {
   ) {
     const router = express.Router();
 
-    router.post('/', this.addChart.bind(this));
     router.get('/', this.getCharts.bind(this));
+    router.post('/', this.addChart.bind(this));
 
     router.get('/:id', this.getChart.bind(this));
     router.get('/:id/positions', this.getChartPostions.bind(this));
+
+    router.delete('/:id', this.deleteChart.bind(this));
 
     app.use('/api/charts', router);
   }
@@ -44,6 +46,13 @@ export class ChartsRouter {
   private getChartPostions(req: core.Request, res: core.Response) {
     this.chartsService.getChartPositions(req.params.id).then(
       positions => res.send(positions),
+      error => this.handleError(res, error),
+    );
+  }
+
+  private deleteChart(req: core.Request, res: core.Response) {
+    this.chartsService.deleteChartById(req.params.id).then(
+      () => res.status(200).send(`Chart with Id ${req.params.id} has been deleted`),
       error => this.handleError(res, error),
     );
   }

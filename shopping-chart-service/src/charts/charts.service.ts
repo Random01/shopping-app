@@ -42,7 +42,9 @@ export class ChartsService extends DbAccessService {
 
   public async deleteChartById(id: string): Promise<void> {
     const query = {
-      text: 'DELETE FROM charts WHERE chart_id=$1',
+      text: `
+        DELETE FROM charts WHERE chart_id=$1
+      `,
       values: [id],
     };
     await this.runQuery(query);

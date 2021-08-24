@@ -10,7 +10,9 @@ import { CheckoutRouter } from './src/checkout';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-AWS.config.update({ region: process.env.AWS_REGION || 'us-east-2' });
+AWS.config.update({
+  region: process.env.AWS_REGION || 'us-east-2'
+});
 
 app.use(express.json());
 app.use(express.urlencoded({

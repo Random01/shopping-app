@@ -1,13 +1,18 @@
-import { Client, QueryConfig, QueryResult } from 'pg';
+import { Client, ClientConfig, QueryConfig, QueryResult } from 'pg';
 
-import { DefaultPostgressConfig } from './default-postgres-config';
+import { SecretManagerService } from './secret-manager.service';
 
 export class DbAccessService {
 
-  constructor(protected readonly config = DefaultPostgressConfig) { }
+  private configPromise: Promise<ClientConfig>;
+
+  constructor(
+    protected readonly secretManager = new SecretManagerService(),
+  ) { }
 
   protected async getConnection(): Promise<Client> {
-    const client = new Client(this.config);
+    const config = await this.getConnectionConfig();
+    const client = new Client(config);
     await client.connect();
     return client;
   }
@@ -17,6 +22,10 @@ export class DbAccessService {
     const res = await client.query(query);
     await client.end();
     return res;
+  }
+
+  private getConnectionConfig() {
+    return this.configPromise || (this.configPromise = this.secretManager.getConfig());
   }
 
 }
