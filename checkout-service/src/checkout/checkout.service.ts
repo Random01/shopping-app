@@ -1,5 +1,7 @@
-import { CheckoutSqsLongPollingListenerService } from './checkout-sqs-long-polling-listener.service';
 import { ExternalCheckoutSqsSenderService } from '../external-checkout';
+
+import { CheckoutSqsLongPollingListenerService } from './checkout-sqs-long-polling-listener.service';
+import { CheckoutSqsSenderService } from './checkout-sqs-sender.service';
 
 /**
  * - Order service should be created
@@ -13,6 +15,7 @@ export class CheckoutService {
 
   constructor(
     private readonly checkoutSqsListener = new CheckoutSqsLongPollingListenerService(),
+    private readonly checkoutSqsSender = new CheckoutSqsSenderService(),
     private readonly externalCheckoutService = new ExternalCheckoutSqsSenderService(),
   ) { }
 
@@ -29,8 +32,12 @@ export class CheckoutService {
     this.timeout != null && clearInterval(this.timeout);
   }
 
-  private async processOrder(chartId: string): Promise<void> {
-    await this.externalCheckoutService.runExternalCheckout(chartId);
+  private async processOrder(payload: any): Promise<void> {
+    await Promise.all([
+      this.checkoutSqsSender.sendMessage({ chartId: payload.chart.id, success: true }),
+      this.externalCheckoutService.sendMessage(payload),
+    ]);
+    return undefined;
   }
 
 }

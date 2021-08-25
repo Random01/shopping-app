@@ -12,7 +12,7 @@ export type OrderProcessDetails = {
 export class CheckoutSqsLongPollingListenerService {
 
   public receiveMessage(callback: (orderDetails: OrderProcessDetails) => Promise<void>) {
-    const queueURL = 'https://sqs.us-east-2.amazonaws.com/252842722782/checkout-in-queue';
+    const queueURL = 'https://sqs.us-east-2.amazonaws.com/252842722782/checkout-out-queue';
     const params: SQS.Types.ReceiveMessageRequest = {
       AttributeNames: ['SentTimestamp'],
       MaxNumberOfMessages: 1,

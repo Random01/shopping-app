@@ -28,6 +28,8 @@ export class CheckoutSqsLongPollingListenerService {
       if (err) {
         console.log('Error', err);
       } else if (data.Messages) {
+        console.log('Message has been received!');
+
         const { ReceiptHandle, Body } = data.Messages[0];
 
         callback(this.parseOrderDetails(Body)).then(() => {
