@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS charts;
 DROP TABLE IF EXISTS products;
 
 CREATE TABLE charts (
-  chart_id  uuid PRIMARY KEY
+  chart_id    uuid PRIMARY KEY,
+  processed   boolean
 );
 
 CREATE TABLE products (
@@ -23,10 +24,10 @@ CREATE TABLE chart_positions (
   PRIMARY KEY (chart_id, product_id)
 );
 
-INSERT INTO charts (chart_id)
-  VALUES ('ee5abb10-1f87-4c74-8834-f6491d63c651');
-INSERT INTO charts (chart_id)
-  VALUES ('5defe7a6-2ea8-4e40-bc87-7bd19921bd9d');
+INSERT INTO charts (chart_id, processed)
+  VALUES ('ee5abb10-1f87-4c74-8834-f6491d63c651', FALSE);
+INSERT INTO charts (chart_id, processed)
+  VALUES ('5defe7a6-2ea8-4e40-bc87-7bd19921bd9d', FALSE);
 
 INSERT INTO products (product_id, title, description, price)
   VALUES ('95e5cc8f-a3b0-4930-abbe-3709652c2a78', 'Product 1', '', 1000);

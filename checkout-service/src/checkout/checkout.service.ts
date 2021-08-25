@@ -1,5 +1,5 @@
 import { CheckoutSqsLongPollingListenerService } from './checkout-sqs-long-polling-listener.service';
-import { ExternalCheckoutSqsSenderService } from './external-checkout';
+import { ExternalCheckoutSqsSenderService } from '../external-checkout';
 
 /**
  * - Order service should be created

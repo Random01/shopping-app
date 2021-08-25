@@ -19,13 +19,14 @@ export class ChartsService extends DbAccessService {
 
   public async getChartById(id: string): Promise<Chart> {
     const query = {
-      text: 'SELECT chart_id FROM charts WHERE chart_id=$1',
+      text: 'SELECT chart_id, processed FROM charts WHERE chart_id=$1',
       values: [id],
     };
 
     const { rows } = await this.runQuery(query);
     return {
       id: rows[0].chart_id,
+      processed: rows[0].processed,
       positions: [],
     };
   }
@@ -41,13 +42,14 @@ export class ChartsService extends DbAccessService {
   }
 
   public async deleteChartById(id: string): Promise<void> {
-    const query = {
-      text: `
-        DELETE FROM charts WHERE chart_id=$1
-      `,
+    await this.runQuery({
+      text: 'DELETE FROM chart_positions WHERE chart_id=$1',
       values: [id],
-    };
-    await this.runQuery(query);
+    });
+    await this.runQuery({
+      text: 'DELETE FROM charts WHERE chart_id=$1',
+      values: [id],
+    });
   }
 
   public async putProduct(chartId: string, productId: string, quantity = 0): Promise<void> {
@@ -64,14 +66,13 @@ export class ChartsService extends DbAccessService {
     };
 
     await this.runQuery(query);
-
-    return Promise.resolve();
   }
 
   public async getAllCharts(): Promise<Chart[]> {
-    const { rows } = await this.runQuery('SELECT chart_id FROM charts');
+    const { rows } = await this.runQuery('SELECT chart_id, processed FROM charts');
     return (rows || []).map(row => ({
       id: row.chart_id,
+      processed: row.processed,
       positions: [],
     }));
   }
@@ -79,11 +80,25 @@ export class ChartsService extends DbAccessService {
   public async addChart(): Promise<string> {
     const id = uuidv4();
     const query = {
-      text: 'INSERT INTO charts (chart_id) VALUES ($1)',
+      text: 'INSERT INTO charts (chart_id, processed) VALUES ($1, FALSE)',
       values: [id],
     };
     await this.runQuery(query);
     return id;
+  }
+
+  public async updateState(chartId: string, processed: boolean) {
+    if (!chartId) {
+      throw new Error('chartId should be provided');
+    }
+
+    const query = {
+      text: 'UPDATE charts SET processed=$2 WHERE chart_id=$1',
+      values: [chartId, processed ? 'TRUE' : 'FALSE'],
+    };
+
+    await this.runQuery(query);
+    return Promise.resolve();
   }
 
 }

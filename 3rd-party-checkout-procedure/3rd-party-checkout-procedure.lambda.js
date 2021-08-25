@@ -2,10 +2,9 @@
 const AWS = require('aws-sdk');
 
 exports.handler = async (event) => {
-  AWS.config.update({ region: 'us-east-2' });
-
   const params = {
-    Message: 'Successful Checkout!',
+    Subject: 'Successful Checkout!',
+    Message: JSON.stringify(event, null, 2),
     TopicArn: 'arn:aws:sns:us-east-2:252842722782:3rd-party-checkout-procedure-topic',
   };
 

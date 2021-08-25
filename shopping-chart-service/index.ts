@@ -2,16 +2,18 @@ import AWS from 'aws-sdk';
 
 import express from 'express';
 
-import { pid } from 'process';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ChartsRouter } from './src/charts';
 import { CheckoutRouter } from './src/checkout';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const appUuid = uuidv4();
 
 AWS.config.update({
-  region: process.env.AWS_REGION || 'us-east-2'
+  region: process.env.AWS_REGION || 'us-east-2',
+  logger: console,
 });
 
 app.use(express.json());
@@ -24,7 +26,7 @@ app.get('/', (_, res) => {
 });
 
 app.get('/state', (_, res) => {
-  res.send(`This process is pid ${pid}`);
+  res.send({ appUuid });
 });
 
 (new ChartsRouter(app));

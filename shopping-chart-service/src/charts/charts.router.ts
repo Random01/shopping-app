@@ -16,8 +16,10 @@ export class ChartsRouter {
 
     router.get('/:id', this.getChart.bind(this));
     router.get('/:id/positions', this.getChartPostions.bind(this));
+    router.post('/:id/positions', this.addPositionIntoChart.bind(this));
 
     router.delete('/:id', this.deleteChart.bind(this));
+    router.post('/:id/state', this.updateState.bind(this));
 
     app.use('/api/charts', router);
   }
@@ -53,6 +55,20 @@ export class ChartsRouter {
   private deleteChart(req: core.Request, res: core.Response) {
     this.chartsService.deleteChartById(req.params.id).then(
       () => res.status(200).send(`Chart with Id ${req.params.id} has been deleted`),
+      error => this.handleError(res, error),
+    );
+  }
+
+  private updateState(req: core.Request, res: core.Response) {
+    this.chartsService.updateState(req.params.id, true).then(
+      () => res.status(200).send(`Chart with Id ${req.params.id} has been udated`),
+      error => this.handleError(res, error),
+    );
+  }
+
+  private addPositionIntoChart(req: core.Request, res: core.Response) {
+    this.chartsService.putProduct(req.params.id, req.body.productId, req.body.quantity).then(
+      () => res.status(200).send(`Product with Id ${req.body.productId} has been added to Chart ${req.params.id}`),
       error => this.handleError(res, error),
     );
   }

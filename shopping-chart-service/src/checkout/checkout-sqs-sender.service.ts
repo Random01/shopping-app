@@ -1,4 +1,6 @@
-import AWS from 'aws-sdk';
+import { SQS } from 'aws-sdk';
+
+import { Chart } from '../models';
 
 /**
  * This service sends a message to "IN" SQS queue.
@@ -7,15 +9,15 @@ import AWS from 'aws-sdk';
  */
 export class CheckoutSqsSenderService {
 
-  public async sendMessage(message: string) {
-    const params: AWS.SQS.Types.SendMessageRequest = {
+  public async checkoutChart(chart: Chart) {
+    const params: SQS.Types.SendMessageRequest = {
       DelaySeconds: 10,
-      MessageBody: message,
+      MessageBody: JSON.stringify({ chart }),
       QueueUrl: 'https://sqs.us-east-2.amazonaws.com/252842722782/checkout-in-queue',
     };
 
     try {
-      const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+      const sqs = new SQS({ apiVersion: '2012-11-05' });
       return await sqs.sendMessage(params).promise();
     } catch (err) {
       return Promise.reject(err);
