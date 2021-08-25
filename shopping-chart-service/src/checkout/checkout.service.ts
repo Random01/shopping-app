@@ -2,7 +2,7 @@ import { ChartsService } from '../charts/charts.service';
 import { CheckoutSqsSenderService } from './checkout-sqs-sender.service';
 
 /**
- * This services sends a message to SQS queue.
+ * This service calls Order (Checkout) Service through AWS SQS.
  */
 export class CheckoutService {
 
@@ -14,7 +14,7 @@ export class CheckoutService {
   public async checkout(chartId: string): Promise<void> {
     const chart = await this.chartsService.getChartById(chartId);
 
-    await this.checkoutSqsSender.sendMessage('Run Checkout for chart ' + chart.id, {});
+    await this.checkoutSqsSender.sendMessage('Run Checkout for chart ' + chart.id);
   }
 
 }
