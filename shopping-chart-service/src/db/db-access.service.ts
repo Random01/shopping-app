@@ -24,6 +24,13 @@ export class DbAccessService {
     return res;
   }
 
+  protected async runQueries<T = any>(queries: string[] | QueryConfig[]): Promise<QueryResult<T>[]> {
+    const client = await this.getConnection()
+    const res = await Promise.all(queries.map(query => client.query(query)));
+    await client.end();
+    return res;
+  }
+
   private getConnectionConfig() {
     return this.configPromise || (this.configPromise = this.secretManager.getConfig());
   }

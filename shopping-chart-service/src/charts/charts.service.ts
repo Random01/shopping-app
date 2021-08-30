@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { DbAccessService } from '../db';
 
-import { Chart } from '../models';
+import { Chart, Product } from '../models';
 
 /**
  * https://www.w3schools.com/sql/sql_where.asp
@@ -18,37 +18,69 @@ import { Chart } from '../models';
 export class ChartsService extends DbAccessService {
 
   public async getChartById(id: string): Promise<Chart> {
-    const query = {
+    const getChartQuery = {
       text: 'SELECT chart_id, processed FROM charts WHERE chart_id=$1',
       values: [id],
     };
 
-    const { rows } = await this.runQuery(query);
+    const getPositionsQuery = {
+      text: `
+        SELECT cp.product_id, cp.quantity, p.title
+        FROM chart_positions cp, products p
+        WHERE chart_id=$1 AND cp.product_id = p.product_id
+      `,
+      values: [id],
+    };
+
+    const [chartResult, positionsResult] = await this.runQueries([getChartQuery, getPositionsQuery]);
     return {
-      id: rows[0].chart_id,
-      processed: rows[0].processed,
-      positions: [],
+      id: chartResult.rows[0].chart_id,
+      processed: chartResult.rows[0].processed,
+      positions: positionsResult.rows.map(row => {
+        return {
+          product: {
+            id: row.product_id,
+            title: row.title,
+          } as Product,
+          quantity: row.quantity
+        };
+      }),
     };
   }
 
-  public async getChartPositions(id: string) {
+  /**
+   * Returns a list of chart postions for a chart.
+   */
+  public async getChartPositions(chartId: string) {
+    if (!chartId) {
+      throw new Error('chartId should be provided');
+    }
+
     const query = {
-      text: 'SELECT chart_id, product_id, quantity FROM chart_positions WHERE chart_id=$1',
-      values: [id],
+      text: `
+        SELECT cp.product_id, cp.quantity, p.title
+        FROM chart_positions cp, products p
+        WHERE chart_id=$1 AND cp.product_id = p.product_id
+      `,
+      values: [chartId],
     };
 
     const { rows } = await this.runQuery(query);
     return rows;
   }
 
-  public async deleteChartById(id: string): Promise<void> {
+  public async deleteChartById(chartId: string): Promise<void> {
+    if (!chartId) {
+      throw new Error('chartId should be provided');
+    }
+
     await this.runQuery({
       text: 'DELETE FROM chart_positions WHERE chart_id=$1',
-      values: [id],
+      values: [chartId],
     });
     await this.runQuery({
       text: 'DELETE FROM charts WHERE chart_id=$1',
-      values: [id],
+      values: [chartId],
     });
   }
 
