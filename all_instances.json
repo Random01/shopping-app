@@ -1,0 +1,116 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Create two EC2 instances - Shopping Chart Service and Checkout Service",
+	"Parameters": {
+		"keyId": {
+			"Type": "String",
+			"Description": "AWS_ACCESS_KEY_ID",
+			"NoEcho": true
+		},
+		"accessKey": {
+			"Type": "String",
+			"Description": "AWS_SECRET_ACCESS_KEY",
+			"NoEcho": true
+		}
+	},
+	"Resources": {
+		"ShoppingChartServiceInstance": {
+			"Type": "AWS::EC2::Instance",
+			"Properties": {
+				"ImageId": "ami-0443305dabd4be2bc",
+				"InstanceType": "t2.micro",
+				"KeyName": "my-key-pair-ssh",
+				"SecurityGroups": [
+					{
+						"Ref": "WebServerSecurityGroup"
+					}
+				],
+				"UserData": {
+					"Fn::Base64": {
+						"Fn::Join": [
+							"\n",
+							[
+								"#!/bin/bash -xe",
+								"sudo yum update -y",
+								"sudo amazon-linux-extras install docker -y",
+								"sudo service docker start",
+								"sudo docker pull falserandom/shopping-chart-service",
+								{
+									"Fn::Sub": [
+										"sudo docker run -d -p 80:3001 -e AWS_ACCESS_KEY_ID='${keyId}' -e AWS_SECRET_ACCESS_KEY='${accessKey}' -e AWS_REGION='${AWS::Region}' falserandom/shopping-chart-service",
+										{
+											"keyId": { "Ref": "keyId" },
+											"accessKey": { "Ref": "accessKey" }
+										}
+									]
+								}
+							]
+						]
+					}
+				},
+				"Tags": [
+					{
+						"Key": "Name",
+						"Value": "Shopping Chart Service Instance"
+					}
+				]
+			}
+		},
+		"CheckoutServiceInstance": {
+			"Type": "AWS::EC2::Instance",
+			"Properties": {
+				"ImageId": "ami-0443305dabd4be2bc",
+				"InstanceType": "t2.micro",
+				"KeyName": "my-key-pair-ssh",
+				"SecurityGroups": [
+					{
+						"Ref": "WebServerSecurityGroup"
+					}
+				],
+				"UserData": {
+					"Fn::Base64": {
+						"Fn::Join": [
+							"\n",
+							[
+								"#!/bin/bash -xe",
+								"sudo yum update -y",
+								"sudo amazon-linux-extras install docker -y",
+								"sudo service docker start",
+								"sudo docker pull falserandom/checkout-service",
+								{
+									"Fn::Sub": [
+										"sudo docker run -d -p 80:3002 -e AWS_ACCESS_KEY_ID='${keyId}' -e AWS_SECRET_ACCESS_KEY='${accessKey}' -e AWS_REGION='${AWS::Region}' falserandom/checkout-service",
+										{
+											"keyId": { "Ref": "keyId" },
+											"accessKey": { "Ref": "accessKey" }
+										}
+									]
+								}
+							]
+						]
+					}
+				},
+				"Tags": [
+					{
+						"Key": "Name",
+						"Value": "Checkout Service Instance"
+					}
+				]
+			}
+		},
+		"WebServerSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"GroupDescription": "Enable HTTP access via port 80",
+				"SecurityGroupIngress": [
+					{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": "80",
+						"IpProtocol": "tcp",
+						"ToPort": "80"
+					}
+				]
+			}
+		}
+	}
+}
