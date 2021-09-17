@@ -54,5 +54,5 @@ const config = {
 const client = new Client(config);
 client.connect()
   .then(() => client.query(query))
-  .then(()=>console.log('DB has been successfully created!'))
+  .then(() => console.log('DB has been successfully created!'))
   .finally(() => client.end()); 
